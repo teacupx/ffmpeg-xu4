@@ -1,0 +1,4 @@
+sudo: required
+dist: bionic
+language: C
+script: make
