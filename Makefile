@@ -11,5 +11,5 @@ distclean: clean
 deb:
 	@debuild -i -us -uc -b
 debclean:
-	@-debuild clean
+	@debuild -- clean
 	@rm -f ../sffmpeg_*
