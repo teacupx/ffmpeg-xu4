@@ -1,0 +1,13 @@
+--- a/libavcodec/qsvdec.c
++++ b/libavcodec/qsvdec.c
+@@ -228,6 +228,9 @@ static int qsv_decode_init(AVCodecContext *avctx, QSVContext *q)
+         break;
+     }
+ 
++    if (avctx->codec_id == AV_CODEC_ID_H264)
++        param.mfx.CodecLevel = MFX_LEVEL_AVC_52;
++
+     param.IOPattern   = q->iopattern;
+     param.AsyncDepth  = q->async_depth;
+     param.ExtParam    = q->ext_buffers;
+

@@ -1,6 +1,6 @@
 PROJECT(sffmpeg)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.6)
 INCLUDE(ExternalProject)
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_BINARY_DIR}/include)
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
@@ -169,7 +169,7 @@ EXTERNALPROJECT_ADD(
   # URL https://github.com/Haivision/srt/archive/v1.4.1.tar.gz
   URL ${CMAKE_SOURCE_DIR}/vendor/srt-v1.4.1.tar.gz
   PATCH_COMMAND ${CMAKE_SOURCE_DIR}/patches/patch-manager.sh srt
-  CONFIGURE_COMMAND mkdir -p build && cd build && PATH=$ENV{PATH} PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} cmake .. -DENABLE_SHARED=0 -DENABLE_APPS=0 -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
+  CONFIGURE_COMMAND mkdir -p build && cd build && PATH=$ENV{PATH} PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} cmake -DENABLE_SHARED=0 -DENABLE_APPS=0 -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR} ..
   BUILD_COMMAND cd build && PATH=$ENV{PATH} make
   INSTALL_COMMAND cd build && PATH=$ENV{PATH} make install
   BUILD_IN_SOURCE 1
@@ -219,13 +219,80 @@ EXTERNALPROJECT_ADD(
   BUILD_IN_SOURCE 1
 )
 EXTERNALPROJECT_ADD(
+  libpciaccess
+  # URL https://github.com/freedesktop/xorg-lib-libpciaccess/archive/libpciaccess-0.13.4.tar.gz
+  URL ${CMAKE_SOURCE_DIR}/vendor/libpciaccess-0.13.4.tar.gz
+  PATCH_COMMAND ${CMAKE_SOURCE_DIR}/patches/patch-manager.sh libpciaccess
+  CONFIGURE_COMMAND CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR} --disable-shared
+  BUILD_IN_SOURCE 1
+)
+EXTERNALPROJECT_ADD(
+  libdrm
+  DEPENDS libpciaccess
+  # URL https://dri.freedesktop.org/libdrm/libdrm-2.4.100.tar.bz2
+  URL ${CMAKE_SOURCE_DIR}/vendor/libdrm-2.4.100.tar.bz2
+  PATCH_COMMAND ${CMAKE_SOURCE_DIR}/patches/patch-manager.sh libdrm
+  CONFIGURE_COMMAND PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}  --disable-vmwgfx --disable-radeon --disable-amdgpu --disable-nouveau --disable-shared
+  BUILD_IN_SOURCE 1
+)
+EXTERNALPROJECT_ADD(
+  libva
+  DEPENDS libdrm
+  # URL https://github.com/intel/libva/archive/2.7.1.tar.gz
+  URL ${CMAKE_SOURCE_DIR}/vendor/intel-libva-2.7.1.tar.bz2
+  PATCH_COMMAND ${CMAKE_SOURCE_DIR}/patches/patch-manager.sh libva
+  CONFIGURE_COMMAND PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR} --disable-shared --with-drivers-path=/usr/local/lib/dri
+  BUILD_IN_SOURCE 1
+)
+EXTERNALPROJECT_ADD(
+  gmmlib
+  DEPENDS libva
+  # URL https://github.com/intel/gmmlib/archive/intel-gmmlib-20.1.1.tar.gz
+  URL ${CMAKE_SOURCE_DIR}/vendor/intel-gmmlib-20.1.1.tar.gz
+  PATCH_COMMAND ${CMAKE_SOURCE_DIR}/patches/patch-manager.sh gmmlib
+  CONFIGURE_COMMAND mkdir -p build && cd build && PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} cmake -DCMAKE_INSTALL_INCLUDEDIR=${CMAKE_BINARY_DIR}/include -DCMAKE_INSTALL_LIBDIR=${CMAKE_BINARY_DIR}/lib ..
+  BUILD_COMMAND cd build && make -j${CONCURRENCY}
+  INSTALL_COMMAND cd build && make install
+  BUILD_IN_SOURCE 1
+)
+EXTERNALPROJECT_ADD(
+  intel-media-driver
+  DEPENDS libva gmmlib
+  # URL https://github.com/intel/media-driver/archive/intel-media-20.1.1.tar.gz
+  URL ${CMAKE_SOURCE_DIR}/vendor/intel-media-driver-20.1.1.tar.gz
+  PATCH_COMMAND ${CMAKE_SOURCE_DIR}/patches/patch-manager.sh intel-media-driver
+  CONFIGURE_COMMAND mkdir -p build && cd build && PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} cmake -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR} -DLIBVA_DRIVERS_PATH=${CMAKE_BINARY_DIR}/lib/dri -DMEDIA_RUN_TEST_SUITE=0 ..
+  BUILD_COMMAND cd build && make -j${CONCURRENCY}
+  INSTALL_COMMAND cd build && make install
+  BUILD_IN_SOURCE 1
+)
+EXTERNALPROJECT_ADD(
+  intel-media-sdk
+  DEPENDS libva intel-media-driver
+  # URL https://github.com/Intel-Media-SDK/MediaSDK/archive/intel-mediasdk-20.1.1.tar.gz
+  URL ${CMAKE_SOURCE_DIR}/vendor/intel-media-sdk-20.1.1.tar.gz
+  PATCH_COMMAND ${CMAKE_SOURCE_DIR}/patches/patch-manager.sh intel-media-sdk
+  CONFIGURE_COMMAND mkdir -p build && cd build && PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} cmake -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR} -DMFX_MODULES_DIR=/usr/local/lib -DMFX_PLUGINS_CONF_DIR=/usr/local/lib/mfx -DMFX_PLUGINS_DIR=/usr/local/lib/mfx -DMFX_APPS_DIR=${CMAKE_BINARY_DIR} -DBUILD_TUTORIALS=OFF ..
+  BUILD_COMMAND cd build && make -j${CONCURRENCY}
+  INSTALL_COMMAND cd build && make install
+  BUILD_IN_SOURCE 1
+)
+EXTERNALPROJECT_ADD(
+  gputop
+  DEPENDS intel-media-driver
+  URL ${CMAKE_SOURCE_DIR}/vendor/gputop-4.2.2.tar.gz
+  PATCH_COMMAND ${CMAKE_SOURCE_DIR}/patches/patch-manager.sh gputop
+  CONFIGURE_COMMAND CFLAGS=-I${CMAKE_BINARY_DIR}/samples LDFLAGS=-L${CMAKE_BINARY_DIR}/samples ./configure --prefix=${CMAKE_BINARY_DIR}
+  BUILD_IN_SOURCE 1
+)
+EXTERNALPROJECT_ADD(
   ffmpeg
-  DEPENDS nasm opencore-amr fdkaac lame libogg opus speex libvorbis libtheora xvidcore x264 x265 aom libvpx rtmpdump srt freetype libass openssl
+  DEPENDS nasm opencore-amr fdkaac lame libogg opus speex libvorbis libtheora xvidcore x264 x265 aom libvpx rtmpdump srt freetype libass openssl intel-media-sdk
   # URL https://www.ffmpeg.org/releases/ffmpeg-4.2.2.tar.bz2
   URL ${CMAKE_SOURCE_DIR}/vendor/ffmpeg-4.2.2.tar.bz2
   PATCH_COMMAND ${CMAKE_SOURCE_DIR}/patches/patch-manager.sh ffmpeg
-  CONFIGURE_COMMAND PATH=$ENV{PATH} PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure --prefix=${CMAKE_BINARY_DIR} --datadir=${CMAKE_BINARY_DIR}/etc --disable-shared --enable-static --enable-gpl --enable-version3 --enable-nonfree --enable-runtime-cpudetect --disable-doc --disable-debug --disable-ffplay --disable-indevs --disable-outdevs --extra-cflags=-I${CMAKE_BINARY_DIR}/include\ --static --extra-ldflags=-L${CMAKE_BINARY_DIR}/lib\ -static --extra-libs=-lvorbis\ -logg\ -lcrypto\ -lexpat\ -lz\ -lpthread\ -lstdc++\ -lm\ -ldl --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libspeex --enable-libtheora --enable-libvorbis --enable-libxvid --enable-libx264 --enable-libx265 --enable-libaom --enable-libvpx --enable-librtmp --enable-libsrt --enable-libfreetype --enable-libass --enable-openssl
-  BUILD_COMMAND PATH=$ENV{PATH} make
+  CONFIGURE_COMMAND PATH=$ENV{PATH} PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure --prefix=${CMAKE_BINARY_DIR} --datadir=${CMAKE_BINARY_DIR}/etc --disable-shared --enable-static --enable-gpl --enable-version3 --enable-nonfree --enable-runtime-cpudetect --disable-doc --disable-debug --disable-ffplay --disable-indevs --disable-outdevs --extra-cflags=-I${CMAKE_BINARY_DIR}/include\ --static --extra-ldflags=-L${CMAKE_BINARY_DIR}/lib --extra-libs=-lvorbis\ -logg\ -lcrypto\ -lexpat\ -lz\ -lpthread\ -lstdc++\ -ldrm\ -lm\ -ldl --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libfdk-aac --enable-libmp3lame --enable-libopus --enable-libspeex --enable-libtheora --enable-libvorbis --enable-libxvid --enable-libx264 --enable-libx265 --enable-libaom --enable-libvpx --enable-librtmp --enable-libsrt --enable-libfreetype --enable-libass --enable-openssl --enable-vaapi --enable-libmfx
+  BUILD_COMMAND PATH=$ENV{PATH} make -j${CONCURRENCY}
   BUILD_IN_SOURCE 1
 )
 EXTERNALPROJECT_ADD(
@@ -242,6 +309,6 @@ EXTERNALPROJECT_ADD(
   DEPENDS ffmpeg libpng
   URL ${CMAKE_SOURCE_DIR}/vendor/frmxtract-4.2.2.tar.gz
   PATCH_COMMAND ${CMAKE_SOURCE_DIR}/patches/patch-manager.sh frmxtract
-  CONFIGURE_COMMAND CC=${CMAKE_C_COMPILER} PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure --prefix=${CMAKE_BINARY_DIR}
+  CONFIGURE_COMMAND CC=${CMAKE_C_COMPILER} PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} EXTRA_LIBS=libdrm ./configure --prefix=${CMAKE_BINARY_DIR}
   BUILD_IN_SOURCE 1
 )

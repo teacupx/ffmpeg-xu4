@@ -3,9 +3,11 @@
 %:
 	dh $@
 
-override_dh_makeshlibs:
+override_dh_auto_clean:
 
 override_dh_shlibdeps:
 
-override_dh_auto_clean:
-	dh_clean
+override_dh_strip:
+	dh_strip --no-automatic-dbgsym
+
+override_dh_usrlocal:

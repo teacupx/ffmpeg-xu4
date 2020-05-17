@@ -1,8 +1,8 @@
+CONCURRENCY=`cat /proc/cpuinfo |grep ^processor |wc -l`
+
 sffmpeg:
-	@mkdir -p build && \
-	cd build && \
-	cmake -DCMAKE_BUILD_TYPE=Release .. && \
-	make -k 2>&1 |tee build.log #-j`cat /proc/cpuinfo|grep ^processor|wc -l`
+	@mkdir -p build && cd build && cmake -DCONCURRENCY=$(CONCURRENCY) .. && \
+	make -k -j$(CONCURRENCY) 2>&1 |tee build.log
 
 clean:
 distclean: clean

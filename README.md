@@ -10,7 +10,7 @@ test and compare multiple builds of FFmpeg on the same host.
 
 - a POSIX-compliant system (virtually any system today).
 - a recent version of [gcc](http://gcc.gnu.org/).
-- a recent version of [cmake](http://www.cmake.org/) (3.0+).
+- a recent version of [cmake](http://www.cmake.org/) (3.6+).
 - the [autoconf](http://www.gnu.org/software/autoconf/) and [libtool](http://www.gnu.org/software/libtool/) utilities.
 - the [pkg-config](http://www.freedesktop.org/wiki/Software/pkg-config) utility.
 
