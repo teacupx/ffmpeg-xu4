@@ -1,3 +1,10 @@
+sffmpeg (4.2.3) stable; urgency=medium
+
+  * upgrade to ffmpeg 4.2.3
+  * add a missing patch for qsv
+
+ -- Pierre-Yves Kerembellec <py.kerembellec@gmail.com>  Tue, 02 Jun 2020 16:42:50 +0200
+
 sffmpeg (4.2.2p3) stable; urgency=medium
 
   * add qsv support

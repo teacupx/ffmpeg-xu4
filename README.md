@@ -25,7 +25,7 @@ Then go grab a coffee (or maybe ten). The helper will compile all FFmpeg depende
 FFmpeg binary in the `build/bin` directory (with all dependencies statically linked-in).
 ```
 $ build/bin/ffmpeg
-ffmpeg version 4.2.2 Copyright (c) 2000-2019 the FFmpeg developers
+ffmpeg version 4.2.3 Copyright (c) 2000-2020 the FFmpeg developers
   libavutil      56. 31.100 / 56. 31.100
   libavcodec     58. 54.100 / 58. 54.100
   libavformat    58. 29.100 / 58. 29.100
@@ -49,8 +49,8 @@ $ make deb
 
 The `ffmpeg`, `ffprobe` and `frmxtract` binaries will be installed by the package in the `/usr/bin` directory.
 ```
-$ sudo dpkg -i ../sffmpeg_4.2.2_amd64.deb
+$ sudo dpkg -i ../sffmpeg_4.2.3_amd64.deb
 Selecting previously unselected package sffmpeg.
-Unpacking sffmpeg (4.2.2) ...
-Setting up sffmpeg (4.2.2) ...
+Unpacking sffmpeg (4.2.3) ...
+Setting up sffmpeg (4.2.3) ...
 ```
