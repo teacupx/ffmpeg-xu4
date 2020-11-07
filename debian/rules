@@ -2,6 +2,8 @@
 
 %:
 	dh $@
+	dh_link
+	dh_install
 
 override_dh_auto_clean:
 
