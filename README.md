@@ -5,20 +5,24 @@ It currently works on Linux and other POSIX systems (with a few tweaks). It has 
 (Ubuntu 18.04).  The helper will grab the latest versions of most FFmpeg dependencies, providing a way to effectively build,
 test and compare multiple builds of FFmpeg on the same host.
 
+**This version is tweaked for the Odroid XU4 MFC encoder**
+
 ## Requirements
 `sffmpeg` requires:
 
 - a POSIX-compliant system (virtually any system today).
 - a recent version of [gcc](http://gcc.gnu.org/).
 - a recent version of [cmake](http://www.cmake.org/) (3.6+).
-- the [autoconf](http://www.gnu.org/software/autoconf/) and [libtool](http://www.gnu.org/software/libtool/) utilities.
+- the [autoconf](http://www.gnu.org/software/autoconf/) and [libtool](http://www.gnu.org/software/libtool/) utilities (automake-1.15 as of now)
 - the [pkg-config](http://www.freedesktop.org/wiki/Software/pkg-config) utility.
+- xutils-dev
 
 ## Usage
 Just type the following commands at the shell prompt:
 
     $ git clone https://github.com/pyke369/sffmpeg
     $ cd sffmpeg
+    $ export CFLAGS="-march=armv7-a -mtune=cortex-a15.cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -mvectorize-with-neon-quad -ffast-math" && export CPPFLAGS=$CFLAGS && export CXXFLAGS=$CFLAGS && export CXX_FLAGS=$CFLAGS
     $ make
 
 Then go grab a coffee (or maybe ten). The helper will compile all FFmpeg dependencies for you. Once done, you should get an
@@ -47,10 +51,10 @@ You may optionally build a Debian package by typing the following command at the
 $ make deb
 ```
 
-The `ffmpeg`, `ffprobe` and `frmxtract` binaries will be installed by the package in the `/usr/bin` directory.
+The `ffmpeg`, `ffprobe` and `frmxtract` binaries will be installed by the package in the `/opt/ffmpeg-xu4/bin` directory.
 ```
-$ sudo dpkg -i ../sffmpeg_4.2.3_amd64.deb
+$ sudo dpkg -i ../ffmpeg-xu4_4.2.3_armhf.deb
 Selecting previously unselected package sffmpeg.
-Unpacking sffmpeg (4.2.3) ...
-Setting up sffmpeg (4.2.3) ...
+Unpacking ffmpeg-xu4 (4.2.3) ...
+Setting up ffmpeg-xu4 (4.2.3) ...
 ```
