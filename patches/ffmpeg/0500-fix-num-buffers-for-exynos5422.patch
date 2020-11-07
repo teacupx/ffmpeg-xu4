@@ -1,0 +1,24 @@
+diff -ur a/libavcodec/v4l2_m2m_dec.c b/libavcodec/v4l2_m2m_dec.c
+--- a/libavcodec/v4l2_m2m_dec.c	2020-08-03 16:20:04.000000000 +0000
++++ b/libavcodec/v4l2_m2m_dec.c	2020-11-07 17:18:56.957318009 +0000
+@@ -222,7 +222,7 @@
+ static const AVOption options[] = {
+     V4L_M2M_DEFAULT_OPTS,
+     { "num_capture_buffers", "Number of buffers in the capture context",
+-        OFFSET(num_capture_buffers), AV_OPT_TYPE_INT, {.i64 = 20}, 20, INT_MAX, FLAGS },
++        OFFSET(num_capture_buffers), AV_OPT_TYPE_INT, {.i64 = 16}, 8, INT_MAX, FLAGS },
+     { NULL},
+ };
+ 
+diff -ur a/libavcodec/v4l2_m2m_enc.c b/libavcodec/v4l2_m2m_enc.c
+--- a/libavcodec/v4l2_m2m_enc.c	2020-08-24 16:20:03.000000000 +0000
++++ b/libavcodec/v4l2_m2m_enc.c	2020-11-07 17:19:51.861284706 +0000
+@@ -392,7 +392,7 @@
+ #define V4L_M2M_CAPTURE_OPTS \
+     V4L_M2M_DEFAULT_OPTS,\
+     { "num_capture_buffers", "Number of buffers in the capture context", \
+-        OFFSET(num_capture_buffers), AV_OPT_TYPE_INT, {.i64 = 4 }, 4, INT_MAX, FLAGS }
++        OFFSET(num_capture_buffers), AV_OPT_TYPE_INT, {.i64 = 8 }, 4, INT_MAX, FLAGS }
+ 
+ static const AVOption mpeg4_options[] = {
+     V4L_M2M_CAPTURE_OPTS,
