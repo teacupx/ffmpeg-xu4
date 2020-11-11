@@ -1,14 +1,14 @@
 # Static FFmpeg Build
-`sffmpeg` is a simple cmake-based full-featured FFmpeg build helper.
+`ffmpeg-xu4` is a simple cmake-based full-featured FFmpeg build helper, based on pyke369/sffmpeg.
 
 It currently works on Linux and other POSIX systems (with a few tweaks). It has been tested the most heavily on Linux/x86_64
-(Ubuntu 18.04).  The helper will grab the latest versions of most FFmpeg dependencies, providing a way to effectively build,
+(Debian Buster).  The helper will grab the latest versions of most FFmpeg dependencies, providing a way to effectively build,
 test and compare multiple builds of FFmpeg on the same host.
 
 **This version is tweaked for the Odroid XU4 MFC encoder**
 
 ## Requirements
-`sffmpeg` requires:
+`ffmpeg-xu4` requires:
 
 - a POSIX-compliant system (virtually any system today).
 - a recent version of [gcc](http://gcc.gnu.org/).
@@ -20,8 +20,8 @@ test and compare multiple builds of FFmpeg on the same host.
 ## Usage
 Just type the following commands at the shell prompt:
 
-    $ git clone https://github.com/pyke369/sffmpeg
-    $ cd sffmpeg
+    $ git clone https://github.com/teacupx/ffmpeg-xu4
+    $ cd ffmpeg-xu4
     $ export CFLAGS="-march=armv7-a -mtune=cortex-a15.cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -mvectorize-with-neon-quad -ffast-math" && export CPPFLAGS=$CFLAGS && export CXXFLAGS=$CFLAGS && export CXX_FLAGS=$CFLAGS
     $ make
 
