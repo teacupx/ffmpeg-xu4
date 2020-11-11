@@ -1,5 +1,12 @@
-ffmpeg-xu4 (4.3.1+git20201107) UNRELEASED; urgency=medium
+ffmpeg-xu4 (4.3.1+git20201107-1armbian1) stable; urgency=medium
 
+  * Add support for OpenCL
+
+ -- JMCC <JMCC@forum.armbian.com>  Sun, 08 Nov 2020 19:44:24 +0100
+
+ffmpeg-xu4 (4.3.1+git20201107-0armbian1) stable; urgency=medium
+
+  [ JMCC ]
   * Tweaked and compiled for Odroid XU4
 
  -- JMCC <JMCC@forum.armbian.com>  Fri, 06 Nov 2020 17:56:14 +0100
